@@ -4,6 +4,20 @@ server:
 spring:
   application:
     name: user-service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/userservice
+    username: sa
+    password: 1
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+
 
 
 eureka:
@@ -14,3 +28,7 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
+
+
+greeting:
+  message: welcome user-service
