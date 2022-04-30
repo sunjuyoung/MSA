@@ -1,6 +1,7 @@
 package com.example.userservice.controller;
 
 import com.example.userservice.dto.UserDTO;
+import com.example.userservice.entity.UserEntity;
 import com.example.userservice.service.UserService;
 import com.example.userservice.vo.RequestUser;
 import com.example.userservice.vo.ResponseUser;
@@ -13,10 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/user-service")
+//@RequestMapping("/user-service")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -44,5 +47,19 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody RequestUser user){
         UserDTO newUser = userService.createUser(modelMapper.map(user, UserDTO.class));
         return ResponseEntity.ok().body(modelMapper.map(newUser, ResponseUser.class));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getUsers(){
+        Iterable<UserEntity> userByAll = userService.getUserByAll();
+        List<ResponseUser> responseUsers =  new ArrayList<>();
+        userByAll.forEach(userEntity ->  responseUsers.add(modelMapper.map(userEntity,ResponseUser.class)));
+        return ResponseEntity.ok().body(responseUsers);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable("userId")String userId){
+        UserDTO user = userService.getUserByUserId(userId);
+        return ResponseEntity.ok().body(modelMapper.map(user,ResponseUser.class));
     }
 }

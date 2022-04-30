@@ -17,6 +17,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    show-sql: true
 
 
 
@@ -32,3 +33,6 @@ eureka:
 
 greeting:
   message: welcome user-service
+logging:
+  level:
+    com.example.userservice: debug
