@@ -21,7 +21,7 @@ spring:
             preLogger: true
             postLogger: true
       routes:
-        - id: user-service  #로그인
+        - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/login
@@ -32,7 +32,7 @@ spring:
 #            - CustomFilter
 #            - AddRequestHeader=first-request, first-request-header2
 #            - AddResponseHeader=first-response, first-response-header2
-        - id: user-service  #회원가입
+        - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/users
@@ -48,6 +48,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
@@ -56,3 +57,8 @@ spring:
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/order-service/**
+
+
+token:
+  expiration_time: 43200000
+  secret: user_token
