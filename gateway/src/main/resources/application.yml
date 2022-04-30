@@ -14,12 +14,45 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud gateway Global filter
+            preLogger: true
+            postLogger: true
       routes:
+        - id: user-service  #로그인
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#            - CustomFilter
+#            - AddRequestHeader=first-request, first-request-header2
+#            - AddResponseHeader=first-response, first-response-header2
+        - id: user-service  #회원가입
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
+            - Method=GET
           filters:
-            - CustomFilter
-#            - AddRequestHeader=first-request, first-request-header2
-#            - AddResponseHeader=first-response, first-response-header2
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalog-service/**
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
