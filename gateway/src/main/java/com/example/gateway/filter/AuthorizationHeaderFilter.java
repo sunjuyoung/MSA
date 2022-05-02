@@ -16,10 +16,14 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
 
     private final Environment env;
+
+    public AuthorizationHeaderFilter(Environment env) {
+       super(Config.class);
+       this.env = env;
+    }
 
     @Override
     public GatewayFilter apply(Config config) {
@@ -47,7 +51,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         boolean returnValue = true;
         String subject = null;
         try{
-            subject = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
+            String key = env.getProperty("token.secret");
+            subject = Jwts.parser().setSigningKey(key)
                     .parseClaimsJws(jwt).getBody()
                     .getSubject();
         }catch (Exception e){
