@@ -38,9 +38,13 @@ public class UserController {
         return "hello user-service";
     }
     @GetMapping("/check")
-    public String check(HttpServletRequest request){
-        log.info("server port : {} ",request.getServerPort());
-        return "hi check port :" + env.getProperty("local.server.port");
+    public String check(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("local.port : "+env.getProperty("local.server.port"));
+        sb.append(" server.port : "+env.getProperty("server.port"));
+        sb.append(" token.secret : "+env.getProperty("token.secret"));
+        sb.append(" token expiration time : "+env.getProperty("token.expiration_time"));
+        return sb.toString();
     }
 
     @PostMapping("/users")
