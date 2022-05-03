@@ -2,6 +2,11 @@ server:
   port: 8081
 
 spring:
+  rabbitmq:
+    host: 127.0.01
+    port: 5672
+    username: guest
+    password: guest
   application:
     name: user-service
   datasource:
@@ -37,7 +42,14 @@ logging:
   level:
     com.example.userservice: debug
 
+
+
 #
 #token:
 #  expiration_time: 43200000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, busrefresh
 #  secret: user_token
