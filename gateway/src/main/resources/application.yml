@@ -10,6 +10,11 @@ eureka:
 
 
 spring:
+  rabbitmq:
+    host: 127.0.01
+    port: 5672
+    username: guest
+    password: guest
   application:
     name: apigateway-service
   cloud:
@@ -75,4 +80,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health,beans
+        include: refresh, health,beans, busrefresh
