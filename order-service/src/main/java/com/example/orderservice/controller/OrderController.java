@@ -30,7 +30,7 @@ public class OrderController {
    }
 
     @GetMapping("/{userId}/order")
-    public ResponseEntity<?> getOrderByUserId(@PathVariable("userId")String userId){
+    public ResponseEntity<List<ResponseOrder>> getOrderByUserId(@PathVariable("userId")String userId){
         List<ResponseOrder> ordersByUserId = orderService.getOrdersByUserId(userId);
         return ResponseEntity.ok().body(ordersByUserId);
     }
