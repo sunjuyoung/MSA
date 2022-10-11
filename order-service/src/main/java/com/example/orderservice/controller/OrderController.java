@@ -1,6 +1,7 @@
 package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderDTO;
+import com.example.orderservice.messagequeue.KafkaProducer;
 import com.example.orderservice.service.OrderService;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
@@ -20,12 +21,17 @@ public class OrderController {
 
     private final OrderService orderService;
     private final ModelMapper modelMapper;
+    private final KafkaProducer kafkaProducer;
 
    @PostMapping("/{userId}/order")
     public ResponseEntity<?> createOrder(@PathVariable("userId")String userId,@RequestBody RequestOrder requestOrder){
        OrderDTO orderDTO = modelMapper.map(requestOrder, OrderDTO.class);
        orderDTO.setUserId(userId);
        OrderDTO order = orderService.createOrder(orderDTO);
+
+       //kafka , send order
+       kafkaProducer.send("example-catalog-topic",orderDTO);
+
        return ResponseEntity.ok().body(modelMapper.map(order, ResponseOrder.class));
    }
 

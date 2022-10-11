@@ -72,9 +72,9 @@ spring:
             - Path=/order-service/**
 
 
-token:
-  expiration_time: 43200000
-  secret: user_token
+#token:
+#  expiration_time: 43200000
+#  secret: user_token
 
 management:
   endpoints:

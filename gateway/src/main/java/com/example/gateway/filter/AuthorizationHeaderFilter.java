@@ -24,7 +24,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
        super(Config.class);
        this.env = env;
     }
+    public static class Config{
 
+    }
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
@@ -72,7 +74,5 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return response.setComplete();
     }
 
-    public static class Config{
 
-    }
 }
