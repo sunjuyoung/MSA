@@ -1,10 +1,12 @@
 package com.example.userservice.service;
 
+import com.example.userservice.client.OrderServiceClient;
 import com.example.userservice.dto.UserDTO;
 import com.example.userservice.entity.UserEntity;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -19,9 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
@@ -29,7 +33,8 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final RestTemplate restTemplate;
+    private final OrderServiceClient orderServiceClient;
+
     private final Environment env;
 
     @Override
@@ -47,14 +52,10 @@ public class UserServiceImpl implements UserService{
         if(userEntity == null){
             throw new UsernameNotFoundException("user not found");
         }
-        String orderUrl = String.format(env.getProperty("order-service.url"),userId);
-        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<ResponseOrder>>() {
-                });
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
 
-        List<ResponseOrder> orderList = orderListResponse.getBody();
         UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
-        userDTO.setOrders(orderList);
+        userDTO.setOrders(orders);
         return userDTO;
     }
 
