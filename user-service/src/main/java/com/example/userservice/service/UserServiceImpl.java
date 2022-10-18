@@ -5,9 +5,12 @@ import com.example.userservice.dto.UserDTO;
 import com.example.userservice.entity.UserEntity;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.vo.ResponseOrder;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -37,6 +40,8 @@ public class UserServiceImpl implements UserService{
 
     private final Environment env;
 
+    private final CircuitBreakerFactory circuitBreakerFactory;
+
     @Override
     public UserDTO createUser(UserDTO userDTO) {
         userDTO.setUserId(UUID.randomUUID().toString());
@@ -52,8 +57,16 @@ public class UserServiceImpl implements UserService{
         if(userEntity == null){
             throw new UsernameNotFoundException("user not found");
         }
-        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        List<ResponseOrder> orders = null;
+        try {
+            //orders =  orderServiceClient.getOrders(userId);
+            CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
+            orders = circuitbreaker.run(()-> orderServiceClient.getOrders(userId),
+                    throwable -> new ArrayList<>());
 
+        }catch (Exception e){
+            log.info(e.getMessage());
+        }
         UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
         userDTO.setOrders(orders);
         return userDTO;

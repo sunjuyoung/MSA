@@ -9,11 +9,11 @@ spring:
     password: guest
   application:
     name: user-service
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:tcp://localhost/~/userservice
-#    username: sa
-#    password:
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:3307/mydb
+    username: root
+    password: rnrdj123
+    driver-class-name: org.mariadb.jdbc.Driver
 
 
   jpa:
@@ -40,18 +40,19 @@ greeting:
   message: welcome user-service
 logging:
   level:
-    com.example.userservice: debug
+    com.example.userservice.client: debug
 
 
 order-service:
   url: http://127.0.0.1:8000/order-service/%s/order
 
 #
-#token:
-#  expiration_time: 43200000
+token:
+  secret: user_token
+  expiration_time: 43200000
 management:
   endpoints:
     web:
       exposure:
         include: refresh, health, beans, busrefresh
-#  secret: user_token
+#
