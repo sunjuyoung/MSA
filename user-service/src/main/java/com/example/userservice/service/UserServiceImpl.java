@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService{
         List<ResponseOrder> orders = null;
         try {
             //orders =  orderServiceClient.getOrders(userId);
+            log.info("before call orders-service");
             CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
             orders = circuitbreaker.run(()-> orderServiceClient.getOrders(userId),
                     throwable -> new ArrayList<>());
@@ -67,6 +68,7 @@ public class UserServiceImpl implements UserService{
         }catch (Exception e){
             log.info(e.getMessage());
         }
+        log.info("after call orders-service");
         UserDTO userDTO = modelMapper.map(userEntity, UserDTO.class);
         userDTO.setOrders(orders);
         return userDTO;
