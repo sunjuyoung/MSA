@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderProducer {
 
-    List<Field> fieldList = Arrays.asList( new Field("String",true,"order_id"),
+    List<Field> fields = Arrays.asList( new Field("String",true,"order_id"),
             new Field("String",true,"user_id"),
             new Field("String",true,"product_id"),
             new Field("int32",true,"qty"),
@@ -25,10 +25,11 @@ public class OrderProducer {
 
     Schema schema = Schema.builder()
             .type("struct")
-            .fields(fieldList)
+            .fields(fields)
             .optional(false)
             .name("orders")
             .build();
+
 
     private final KafkaTemplate<String,String> kafkaTemplate;
 
